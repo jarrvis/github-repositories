@@ -50,7 +50,7 @@ public class GitRepositoryController {
                     "+ \"<li>HTTP connection failure</li>\"" +
                     "</ol>", response = RepositoryDetails.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Validation successful, authorization token is returned"),
+            @ApiResponse(code = 200, message = "Repository details found"),
             @ApiResponse(code = 404, message = "Repository not found"),
             @ApiResponse(code = 422, message = "In case of validation errors on the provided data")})
     public ResponseEntity<RepositoryDetails> getRepository(

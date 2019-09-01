@@ -1,5 +1,6 @@
 package com.recruit.githubrepositories.client.impl;
 
+import com.google.common.collect.ImmutableMap;
 import com.recruit.githubrepositories.api.dto.GithubRepositoryDetails;
 import com.recruit.githubrepositories.client.GitRepositoryClient;
 import com.recruit.githubrepositories.configuration.ApiConfiguration;
@@ -26,10 +27,17 @@ public class GithubRepositoryClient implements GitRepositoryClient {
     ) {
         this.apiConfiguration = apiConfiguration;
         this.restTemplate = restTemplate;
+
+        this.clientId = apiConfiguration.getGithubConfig().getClientId();
+        this.clientSecret = apiConfiguration.getGithubConfig().getClientSecret();
     }
 
     private final ApiConfiguration apiConfiguration;
     private final RestTemplate restTemplate;
+
+    private final String clientId;
+    private final String clientSecret;
+
 
     /**
      *
@@ -43,7 +51,7 @@ public class GithubRepositoryClient implements GitRepositoryClient {
     @CachePut(value = "github_api_cache", key = "#owner + '_' + #repositoryName", condition = "#result != null && #result.getStatusCode().value() == 200")
     public ResponseEntity<GithubRepositoryDetails> getRepositoryDetails(@NotNull String owner, @NotNull String repositoryName) {
         final String url = this.apiConfiguration.getGithubConfig().getUrl();
-        return RestClient.INSTANCE().GET(this.restTemplate, url, GithubRepositoryDetails.class, null, owner, repositoryName);
+        return RestClient.INSTANCE().GET(this.restTemplate, url, GithubRepositoryDetails.class, null, owner, repositoryName, clientId, clientSecret);
     }
 
     /**
@@ -59,7 +67,7 @@ public class GithubRepositoryClient implements GitRepositoryClient {
     @CachePut(value = "github_api_cache", key = "#owner + '_' + #repositoryName", condition = "#result != null && #result.getStatusCode().value() == 200")
     public ResponseEntity<GithubRepositoryDetails> getRepositoryDetails(@NotNull String owner, @NotNull String repositoryName, Map<String, String> headers) {
         final String url = this.apiConfiguration.getGithubConfig().getUrl();
-        return RestClient.INSTANCE().GET(this.restTemplate, url, GithubRepositoryDetails.class, headers, owner, repositoryName);
+        return RestClient.INSTANCE().GET(this.restTemplate, url, GithubRepositoryDetails.class, headers, owner, repositoryName, clientId, clientSecret);
     }
 
     /**

@@ -17,4 +17,10 @@ public class GithubConfig {
 
     @NotEmpty
     private String cacheName;
+
+    @NotEmpty
+    private String clientId;
+
+    @NotEmpty
+    private String clientSecret;
 }

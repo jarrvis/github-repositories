@@ -23,4 +23,13 @@ public class GithubConfig {
 
     @NotEmpty
     private String clientSecret;
+
+    @NotEmpty
+    private String apiVersion;
+
+    @NotEmpty
+    private String accept;
+
+    @NotEmpty
+    private String userAgent;
 }

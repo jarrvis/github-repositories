@@ -22,11 +22,4 @@ public class ApiConfiguration {
 
     private GithubConfig githubConfig;
 
-    public GithubConfig getGithubConfig() {
-        return githubConfig;
-    }
-
-    public void setGithubConfig(GithubConfig githubConfig) {
-        this.githubConfig = githubConfig;
-    }
 }

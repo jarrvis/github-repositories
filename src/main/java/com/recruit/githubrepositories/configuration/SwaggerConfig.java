@@ -27,6 +27,7 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.regex("/repositories.*"))
                 .build()
+                .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo());
     }
 

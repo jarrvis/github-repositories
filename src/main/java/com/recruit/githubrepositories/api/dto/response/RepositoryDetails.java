@@ -1,5 +1,6 @@
 package com.recruit.githubrepositories.api.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class RepositoryDetails implements Serializable {
 

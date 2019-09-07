@@ -1,0 +1,6 @@
+mage: java:8
+pipelines:
+  default:
+    - step:
+        script:
+          - bash ./gradlew clean build

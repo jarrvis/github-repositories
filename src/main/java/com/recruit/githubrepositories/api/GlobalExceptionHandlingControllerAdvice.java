@@ -1,15 +1,20 @@
 package com.recruit.githubrepositories.api;
 
-import com.recruit.githubrepositories.api.exception.NotAcceptableException;
-import com.recruit.githubrepositories.api.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import javax.naming.ServiceUnavailableException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import static io.vavr.API.*;
+import static io.vavr.API.run;
 
 /**
  * Performs exception handling for all REST API controllers. This class provides exception handlers that respond to
@@ -22,44 +27,38 @@ import javax.naming.ServiceUnavailableException;
 public class GlobalExceptionHandlingControllerAdvice {
 
 
-    /**
-     * Exception handler for <i>NotFoundException</i>, translating error into HTTP status code 404.
-     * 
-     * @param ex
-     *            NotFoundException
-     */
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public VndErrors handleNotFoundException(NotFoundException ex) {
+
+    @ExceptionHandler(WebClientResponseException.class)
+    @ResponseBody
+    public VndErrors handleNestedServletException(HttpServletRequest req, HttpServletResponse resp,
+                                               WebClientResponseException ex) {
+
+         Match(ex).of(
+                Case($(e -> HttpStatus.NOT_FOUND.compareTo(ex.getStatusCode()) == 0),
+                        o -> run(() -> resp.setStatus(HttpStatus.NOT_FOUND.value()))),
+                Case($(e -> HttpStatus.FORBIDDEN.compareTo(ex.getStatusCode()) == 0),
+                        o -> run(() -> resp.setStatus(HttpStatus.TOO_MANY_REQUESTS.value()))),
+                Case($(), o -> run(() -> resp.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value())))
+        );
+
         log.warn(ex.getMessage());
         return new VndErrors("error", ex.getMessage());
     }
 
 
     /**
-     * Exception handler for <i>NotAcceptableException</i>, translating error into HTTP status code 406.
-     * 
+     * General fallback exception handler, translating all not otherwise caught errors into HTTP status code 503.
+     *
      * @param ex
-     *            NotAcceptableException
-     */
-    @ExceptionHandler(NotAcceptableException.class)
-    @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
-    public void handleNotAcceptableException(NotAcceptableException ex) {
-        log.warn(ex.getMessage());
-    }
-
-
-    /**
-     * Exception handler for <i>ServiceUnavailableException</i>, translating error into HTTP status code 503.
-     * 
-     * @param ex
-     *            ServiceUnavailableException
+     *            Exception
      */
     @ExceptionHandler(ServiceUnavailableException.class)
     @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
-    public void handleServiceUnavailableException(ServiceUnavailableException ex) {
-        log.warn(ex.getMessage());
+    public VndErrors handleServiceUnavailableException(ServiceUnavailableException ex) {
+        log.error(ex.getMessage(), ex);
+        return new VndErrors("error", ex.getMessage());
     }
+
 
     /**
      * General fallback exception handler, translating all not otherwise caught errors into HTTP status code 503.
@@ -69,8 +68,10 @@ public class GlobalExceptionHandlingControllerAdvice {
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
-    public void handleException(Exception ex) {
+    public VndErrors handleException(Exception ex) {
         log.error(ex.getMessage(), ex);
+        return new VndErrors("error", ex.getMessage());
+
     }
 
 }

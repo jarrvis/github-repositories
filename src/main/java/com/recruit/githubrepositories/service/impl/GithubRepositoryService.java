@@ -36,12 +36,22 @@ public class GithubRepositoryService implements GitRepositoryService {
     /**
      * @param owner
      * @param repositoryName
-     * @return Response entity containing repository details in body and Etag in headers
-     * Put response entity to cache only in case of 200 response
+     * @return Repository details wrapped in Mono
+     * For given owner and repository name it will:
+     * <ul>
+     *   <li>Check if response from Github API is already in cache</li>
+     *   <li>If response is in cache: it will do a request to Github API with <br>If-None-Match</br> header containing the value of <br>etag</> header from cached response</li>
+     *   <li>If response has 304 status then cached response will be used for further processing</li>
+     *   <li>If response has 200 status then current response will be used for further processing</li>
+     *   <li>In case response is not in cache (orElseGet section): Github API is requested</li>
+     *   <li>Response is processed: body is validated amd  mapped to DTO</li>
+     *   <li>Exceptions returned by api client are passed for processing in higher level</li>
+     * </ul>
      */
     @Override
     public Mono<RepositoryDetails> getRepositoryDetails(@NotNull final String owner, @NotNull final String repositoryName) {
-        return Optional.ofNullable(githubRepositoryClient.getCachedRepositoryDetails(owner, repositoryName))
+        return Optional.ofNullable(
+                githubRepositoryClient.getCachedRepositoryDetails(owner, repositoryName))
                 .map((cachedResponse) -> cachedResponse.flatMap(res -> {
                     final Mono<ClientResponse> apiResponse = this.githubRepositoryClient.getRepositoryDetails(owner, repositoryName, res.headers().asHttpHeaders().getETag());
                     return apiResponse.flatMap(r -> {

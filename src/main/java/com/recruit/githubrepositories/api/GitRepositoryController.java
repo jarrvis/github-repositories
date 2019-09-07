@@ -2,7 +2,6 @@ package com.recruit.githubrepositories.api;
 
 
 import com.recruit.githubrepositories.api.dto.response.RepositoryDetails;
-
 import com.recruit.githubrepositories.service.GitRepositoryService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -39,7 +38,7 @@ public class GitRepositoryController {
 
     /**
      * REST operation to fetch git repo details based on owner and repository name
-     *
+     * 
      * @param owner          Git repo owner name
      * @param repositoryName Git repository name
      * @return

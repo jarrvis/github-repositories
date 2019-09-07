@@ -16,6 +16,9 @@ public class GithubConfig {
     private String url;
 
     @NotEmpty
+    private String uri;
+
+    @NotEmpty
     private String cacheName;
 
     @NotEmpty
@@ -32,4 +35,13 @@ public class GithubConfig {
 
     @NotEmpty
     private String userAgent;
+
+    @NotEmpty
+    private boolean usePoxy;
+
+    @NotEmpty
+    private String proxyHost;
+
+    @NotEmpty
+    private int proxyPort;
 }

@@ -22,4 +22,10 @@ public class ApiConfiguration {
 
     private GithubConfig githubConfig;
 
+    private boolean usePoxy;
+
+    private boolean proxyHost;
+
+    private boolean proxyPort;
+
 }

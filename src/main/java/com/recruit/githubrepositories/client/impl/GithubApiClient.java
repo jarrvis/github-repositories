@@ -21,6 +21,16 @@ import reactor.netty.tcp.ProxyProvider;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Main class for accessing Github API. All methods are non-blocking
+ * It creates a default web client with:
+ * <ul>
+ *    <li>headers: Accept = <br>application/vnd.github.v3+json</br> and User-Agent = <br>allegro-recruit</br></li>
+ *    <li><clientId and clientSecret of existing Github OAuth app</li>
+ * </ul>
+ *
+ * Puts to cache all 200 responses. Additionally provides methods to read cached responses
+ */
 @Slf4j
 @Component
 public class GithubApiClient implements GitApiClient {
@@ -33,8 +43,10 @@ public class GithubApiClient implements GitApiClient {
     ) {
         this.apiConfiguration = apiConfiguration;
         this.githubConfig = this.apiConfiguration.getGithubConfig();
-
-        this.cache = cacheManager.getCache("github_api_cache");
+        this.cache = cacheManager.getCache(this.githubConfig.getCacheName());
+        this.clientId = githubConfig.getClientId();
+        this.clientSecret = githubConfig.getClientSecret();
+        this.uri = githubConfig.getUri();
 
         HttpClient httpClient = HttpClient.create();
         if (this.githubConfig.isUsePoxy()) {
@@ -53,10 +65,6 @@ public class GithubApiClient implements GitApiClient {
                 .filter(logRequest())
                 .build();
 
-
-        this.clientId = githubConfig.getClientId();
-        this.clientSecret = githubConfig.getClientSecret();
-        this.uri = githubConfig.getUri();
     }
 
     private final WebClient webClient;
@@ -107,7 +115,8 @@ public class GithubApiClient implements GitApiClient {
      * @return response entity from cache. if missing in cache null is returned.
      * condition "#result != null" cannot be used here as null is always explicitly returned thus cache will not be checked
      * <p>
-     * helper method to stick to Spring caching abstraction instead of using CacheManager explicitly.
+     * Helper method to use Spring caching abstraction instead of using CacheManager explicitly.
+     * </p>
      */
     @Override
     @Cacheable(value = "github_api_cache", key = "#owner + '_' + #repositoryName")

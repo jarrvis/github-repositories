@@ -25,11 +25,11 @@ import javax.validation.constraints.NotNull;
  * Main class for accessing Github API. All methods are non-blocking
  * It creates a default web client with:
  * <ul>
- *    <li>headers: Accept = <br>application/vnd.github.v3+json</br> and User-Agent = <br>allegro-recruit</br></li>
+ *    <li>headers: >Accept : <br>application/vnd.github.v3+json</br> and User-Agent: <br>allegro-recruit</br></li>
  *    <li><clientId and clientSecret of existing Github OAuth app</li>
  * </ul>
  *
- * Puts to cache all 200 responses. Additionally provides methods to read cached responses
+ * Puts to cache all 200 responses. Additionaly provides methods to read cached responses
  */
 @Slf4j
 @Component

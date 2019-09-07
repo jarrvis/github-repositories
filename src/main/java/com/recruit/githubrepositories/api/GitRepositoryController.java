@@ -38,7 +38,7 @@ public class GitRepositoryController {
 
     /**
      * REST operation to fetch git repo details based on owner and repository name
-     *
+     * 
      * @param owner          Git repo owner name
      * @param repositoryName Git repository name
      * @return

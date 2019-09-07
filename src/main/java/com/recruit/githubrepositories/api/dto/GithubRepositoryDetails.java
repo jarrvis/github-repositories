@@ -21,7 +21,7 @@ public class GithubRepositoryDetails implements Serializable {
 
     private static final long serialVersionUID = 8269473897901856964L;
 
-    public static final int MAX_LENGTH_NAME = 35;
+    public static final int MAX_LENGTH_NAME = 100;
 
     @NotEmpty
     @Size(max = MAX_LENGTH_NAME)

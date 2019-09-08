@@ -1,5 +1,3 @@
-
-
 import com.recruit.githubrepositories.api.dto.GithubRepositoryDetails
 import com.recruit.githubrepositories.api.dto.response.RepositoryDetails
 import com.recruit.githubrepositories.converters.GitRepositoryMapper

@@ -8,7 +8,7 @@ import javax.validation.Validator
 import javax.validation.ValidatorFactory
 import java.time.LocalDate
 
-class GithubRepositoryDetailsSpec extends Specification{
+class GithubRepositoryDetailsSpec extends Specification {
 
     private static Validator validator
 

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 public interface GitApiClient {
 
-    Mono<ClientResponse> getRepositoryDetails(@NotNull String owner, @NotNull String repositoryName, String etag);
+    Mono<ClientResponse> getRepositoryDetailsResponse(@NotNull String owner, @NotNull String repositoryName, String etag);
 
-    Mono<ClientResponse> getCachedRepositoryDetails(@NotNull final String owner, @NotNull final String repositoryName);
+    Mono<ClientResponse> getCachedRepositoryDetailsResponse(@NotNull final String owner, @NotNull final String repositoryName);
 }

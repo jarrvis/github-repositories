@@ -2,6 +2,7 @@ package com.recruit.githubrepositories.service
 
 import com.recruit.githubrepositories.api.dto.GithubRepositoryDetails
 import com.recruit.githubrepositories.client.impl.GithubApiClient
+import com.recruit.githubrepositories.converters.GitRepositoryMapper
 import com.recruit.githubrepositories.service.impl.GithubRepositoryService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -19,7 +20,7 @@ class GithubRepositoryServiceSpec extends Specification {
 
     def setup() {
         githubApiClient = Mock(GithubApiClient)
-        githubRepositoryService = new GithubRepositoryService(githubApiClient)
+        githubRepositoryService = new GithubRepositoryService(githubApiClient, GitRepositoryMapper.INSTANCE)
     }
 
     def "Github repository service should return RepositoryDetails"() {
@@ -37,8 +38,8 @@ class GithubRepositoryServiceSpec extends Specification {
         when:
         ClientResponse apiResponse = Mock(ClientResponse)
         apiResponse.bodyToMono(GithubRepositoryDetails.class) >> Mono.just(githubRepositoryDetails)
-        githubApiClient.getCachedRepositoryDetails(_ as String, _ as String) >> null
-        githubApiClient.getRepositoryDetails(_ as String, _ as String, null) >> Mono.just(apiResponse)
+        githubApiClient.getCachedRepositoryDetailsResponse(_ as String, _ as String) >> null
+        githubApiClient.getRepositoryDetailsResponse(_ as String, _ as String, null) >> Mono.just(apiResponse)
 
         and:
         def result = githubRepositoryService.getRepositoryDetails(owner, repositoryName).block()
@@ -69,8 +70,8 @@ class GithubRepositoryServiceSpec extends Specification {
         when:
         apiResponse.statusCode() >> HttpStatus.NOT_MODIFIED
         cachedResponse.bodyToMono(GithubRepositoryDetails.class) >> Mono.just(githubRepositoryDetails)
-        githubApiClient.getRepositoryDetails(_ as String, _ as String, _ as String) >> Mono.just(apiResponse)
-        githubApiClient.getCachedRepositoryDetails(_ as String, _ as String) >> Mono.just(cachedResponse)
+        githubApiClient.getRepositoryDetailsResponse(_ as String, _ as String, _ as String) >> Mono.just(apiResponse)
+        githubApiClient.getCachedRepositoryDetailsResponse(_ as String, _ as String) >> Mono.just(cachedResponse)
 
         and:
         def result = githubRepositoryService.getRepositoryDetails(owner, repositoryName).block()

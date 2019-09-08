@@ -37,8 +37,8 @@ public class GithubApiClient implements GitApiClient {
 
 
     public GithubApiClient(
-            WebClient.Builder webClientBuilder,
-            CacheManager cacheManager,
+            final WebClient.Builder webClientBuilder,
+            final CacheManager cacheManager,
             @Qualifier("apiConfiguration") final ApiConfiguration apiConfiguration
     ) {
         this.apiConfiguration = apiConfiguration;
@@ -48,12 +48,14 @@ public class GithubApiClient implements GitApiClient {
         this.clientSecret = githubConfig.getClientSecret();
         this.uri = githubConfig.getUri();
 
-        HttpClient httpClient = HttpClient.create();
-        if (this.githubConfig.isUsePoxy()) {
-            httpClient = HttpClient.create().tcpConfiguration(tcpClient -> tcpClient.proxy(proxy -> proxy.type(ProxyProvider.Proxy.HTTP)
-                    .host(this.githubConfig.getProxyHost())
-                    .port(this.githubConfig.getProxyPort())));
-        }
+        HttpClient httpClient = this.githubConfig.isUsePoxy() ?
+                HttpClient.create()
+                        .tcpConfiguration(tcpClient -> tcpClient.proxy(proxy -> proxy.type(ProxyProvider.Proxy.HTTP)
+                                .host(this.githubConfig.getProxyHost())
+                                .port(this.githubConfig.getProxyPort())))
+                :
+                HttpClient.create();
+
 
         ReactorClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
 
@@ -79,16 +81,16 @@ public class GithubApiClient implements GitApiClient {
 
 
     /**
+     *  Successful response is put to cache. Spring cache abstraction cannot be used here since it does not yet support async condition:
+     *  <p>@CachePut(value = "github_api_cache", key = "#owner + '_' + #repositoryName", condition = "#result != null && #result.<br>block()</br>.statusCode().is2xxSuccessful()")
+     *  </p>
+     *
      * @param owner
      * @param repositoryName
      * @return response entity from API
-     * <p>
-     * Successful response is put to cache. Spring cache abstraction cannot be used here since it does not support async condition:
-     * @CachePut(value = "github_api_cache", key = "#owner + '_' + #repositoryName", condition = "#result != null && #result.block().statusCode().is2xxSuccessful()")
-     *
-     */
+    */
     @Override
-    public Mono<ClientResponse> getRepositoryDetails(@NotNull String owner, @NotNull String repositoryName, String etag) {
+    public Mono<ClientResponse> getRepositoryDetailsResponse(@NotNull String owner, @NotNull String repositoryName, String etag) {
 
         final Mono<ClientResponse> res = this.webClient.get()
                 .uri(this.uri, owner, repositoryName, clientId, clientSecret)
@@ -120,7 +122,7 @@ public class GithubApiClient implements GitApiClient {
      */
     @Override
     @Cacheable(value = "github_api_cache", key = "#owner + '_' + #repositoryName")
-    public Mono<ClientResponse> getCachedRepositoryDetails(@NotNull String owner, @NotNull String repositoryName) {
+    public Mono<ClientResponse> getCachedRepositoryDetailsResponse(@NotNull String owner, @NotNull String repositoryName) {
         log.debug("Repository details not found in cache. Repo name: {}, owner: {}", repositoryName, owner);
         return null;
     }

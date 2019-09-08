@@ -1,8 +1,11 @@
 package com.recruit.githubrepositories.configuration;
 
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Maps all Spring configuration properties prefixed with "api" to this class and its nested subclasses. JSR 303 bean
@@ -11,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Data
 @Configuration
+@ConfigurationProperties(prefix = "api")
 @EnableConfigurationProperties(GithubConfig.class)
 public class ApiConfiguration {
 
@@ -20,6 +24,7 @@ public class ApiConfiguration {
         this.githubConfig = githubConfig;
     }
 
+    @NotNull
     private GithubConfig githubConfig;
 
     private boolean usePoxy;

@@ -13,7 +13,10 @@ import javax.naming.ServiceUnavailableException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static io.vavr.API.*;
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
+import static io.vavr.API.run;
 
 /**
  * Performs exception handling for all REST API controllers. This class provides exception handlers that respond to

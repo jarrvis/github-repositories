@@ -7,7 +7,6 @@ import javax.validation.Validation
 import javax.validation.Validator
 import javax.validation.ValidatorFactory
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class GithubRepositoryDetailsSpec extends Specification{
 

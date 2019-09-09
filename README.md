@@ -67,10 +67,11 @@ If number of possible repositories > 5000 then proposed solution will not work r
 
 ## TODOs
 
-- Performance of solution to be checked by API testing (e.g. postman tests) with production data.
-- If needed (based on results from testing) horizontal scaling with load balancing should be used
+- Performance of solution to be checked by API testing (e.g. JMeter or postman tests) with production data.
 - On production / testing environments in-memory cache should be replaced by e.g. Redis
 - Spring profiles
+- Synchronization of threads when accessing and writing values to cache
+- If needed (based on results from testing) horizontal scaling with load balancing should be used
 
 ## Rest Template solution
 

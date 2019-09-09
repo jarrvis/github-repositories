@@ -114,14 +114,14 @@ public class GithubApiClient implements GitApiClient {
     /**
      * @param owner
      * @param repositoryName
-     * @return response entity from cache. if missing in cache null is returned.
-     * condition "#result != null" cannot be used here as null is always explicitly returned thus cache will not be checked
+     * @return Mono client response from cache. if missing in cache null is returned.
+     * Method is used only to access the cache, not to put values to cache - handled by <br>unless="true"</br>
      * <p>
      * Helper method to use Spring caching abstraction instead of using CacheManager explicitly.
      * </p>
      */
     @Override
-    @Cacheable(value = "github_api_cache", key = "#owner + '_' + #repositoryName")
+    @Cacheable(value = "github_api_cache", key = "#owner + '_' + #repositoryName", unless = "true")
     public Mono<ClientResponse> getCachedRepositoryDetailsResponse(@NotNull String owner, @NotNull String repositoryName) {
         log.debug("Repository details not found in cache. Repo name: {}, owner: {}", repositoryName, owner);
         return null;

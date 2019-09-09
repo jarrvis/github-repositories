@@ -9,7 +9,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +29,7 @@ import javax.naming.ServiceUnavailableException;
 public class GitRepositoryController {
 
     public GitRepositoryController(
-            @Qualifier("githubRepositoryService") final GitRepositoryService gitRepositoryService) {
+            final GitRepositoryService gitRepositoryService) {
         this.gitRepositoryService = gitRepositoryService;
     }
 

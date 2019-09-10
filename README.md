@@ -78,6 +78,22 @@ If number of possible repositories > 5000 then proposed solution will not work r
 can be checked at:
 https://bitbucket.org/jarrvis/github-repositories/commits/tag/1.0.0
 
+## Run
+
+to run application:
+
+`./gradlew bootRun`
+
+and and then to test it:
+
+`curl http://localhost:8080/repositories/{owner}/{repositoryName}`
+
+or over swagger UI - in your browser go to:
+
+`http://localhost:8080/swagger-ui.html`
+
+
+
 ## Tests
 
 to run all tests:

@@ -1,5 +1,4 @@
 import com.recruit.githubrepositories.api.dto.GithubRepositoryDetails
-import com.recruit.githubrepositories.api.dto.response.RepositoryDetails
 import spock.lang.Specification
 
 import javax.validation.ConstraintViolation
@@ -28,10 +27,10 @@ class GithubRepositoryDetailsSpec extends Specification {
                     .build()
 
         when:
-            Set<ConstraintViolation<RepositoryDetails>> validationResults = validator.validate(githubRepositoryDetails)
+            Set<ConstraintViolation<GithubRepositoryDetails>> validationResults = validator.validate(githubRepositoryDetails)
 
         then:
-            !validationResults.empty
+            validationResults.first().getPropertyPath().first().name == "full_name"
     }
 
     def "should not be possible to get repository details with negative stars count"() {
@@ -45,11 +44,11 @@ class GithubRepositoryDetailsSpec extends Specification {
                     .build()
 
         when:
-            Set<ConstraintViolation<RepositoryDetails>> validationResults = validator.validate(githubRepositoryDetails)
+            Set<ConstraintViolation<GithubRepositoryDetails>> validationResults = validator.validate(githubRepositoryDetails)
 
         then:
             !validationResults.empty
-            validationResults.iterator().next().value == -5
+            validationResults.first().getPropertyPath().first().name == "stargazers_count"
     }
 
     def "should not be possible to get repository details with clone url that is not in url form"() {
@@ -63,10 +62,10 @@ class GithubRepositoryDetailsSpec extends Specification {
                     .build()
 
         when:
-            Set<ConstraintViolation<RepositoryDetails>> validationResults = validator.validate(githubRepositoryDetails)
+            Set<ConstraintViolation<GithubRepositoryDetails>> validationResults = validator.validate(githubRepositoryDetails)
 
         then:
             !validationResults.empty
-            validationResults.iterator().next().value == "notValidUrl"
+            validationResults.first().getPropertyPath().first().name == "clone_url"
     }
 }

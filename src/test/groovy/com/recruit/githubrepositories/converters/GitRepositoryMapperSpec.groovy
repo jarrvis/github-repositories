@@ -21,7 +21,7 @@ class GitRepositoryMapperSpec extends Specification {
                     .full_name("test name")
                     .description("test description")
                     .clone_url("https://test/clone")
-                    .created_at(LocalDate.now())
+                    .created_at(LocalDate.MAX)
                     .stargazers_count(0)
                     .build()
 
@@ -32,7 +32,7 @@ class GitRepositoryMapperSpec extends Specification {
             repositoryDetails.fullName == "test name"
             repositoryDetails.description == "test description"
             repositoryDetails.cloneUrl == "https://test/clone"
-            repositoryDetails.createdAt == LocalDate.now()
+            repositoryDetails.createdAt == LocalDate.MAX
             repositoryDetails.stars == 0
     }
 }

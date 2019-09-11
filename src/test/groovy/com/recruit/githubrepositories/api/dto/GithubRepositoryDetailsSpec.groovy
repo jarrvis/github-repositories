@@ -1,4 +1,9 @@
-import com.recruit.githubrepositories.api.dto.GithubRepositoryDetails
+package com.recruit.githubrepositories.api.dto
+
+
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.json.JsonTest
+import org.springframework.boot.test.json.JacksonTester
 import spock.lang.Specification
 
 import javax.validation.ConstraintViolation
@@ -7,7 +12,11 @@ import javax.validation.Validator
 import javax.validation.ValidatorFactory
 import java.time.LocalDate
 
+@JsonTest
 class GithubRepositoryDetailsSpec extends Specification {
+
+    @Autowired
+    private JacksonTester<GithubRepositoryDetails> json
 
     private static Validator validator
 
@@ -67,5 +76,33 @@ class GithubRepositoryDetailsSpec extends Specification {
         then:
             !validationResults.empty
             validationResults.first().getPropertyPath().first().name == "clone_url"
+    }
+
+    def "Github repository details should be deserialized from json"() {
+        setup:
+            def githubRepositoryDetailsJson =
+                    '''
+                        { 
+                        "full_name" : "test name", 
+                        "description" : "test description", 
+                        "clone_url" : "https://test/clone" ,
+                        "created_at" : "2019-09-11",
+                        "stargazers_count" : 0 
+                        }
+                    '''
+
+            def githubRepositoryDetails = GithubRepositoryDetails.builder()
+                    .full_name("test name")
+                    .description("test description")
+                    .clone_url("https://test/clone")
+                    .created_at(LocalDate.parse("2019-09-11"))
+                    .stargazers_count(0)
+                    .build()
+
+        when:
+            def deserializedRepositoryDetails = this.json.parse(githubRepositoryDetailsJson).object
+
+        then:
+            deserializedRepositoryDetails == githubRepositoryDetails
     }
 }

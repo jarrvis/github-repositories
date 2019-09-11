@@ -13,15 +13,16 @@ import javax.naming.ServiceUnavailableException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.recruit.githubrepositories.patterns.GithubRepositoriesPatterns.$WebClientResponseException;
 import static io.vavr.API.$;
 import static io.vavr.API.Case;
 import static io.vavr.API.Match;
-import static io.vavr.API.run;
+
 
 /**
  * Performs exception handling for all REST API controllers. This class provides exception handlers that respond to
  * possible exceptions with appropriate HTTP status codes for the client.
- * 
+ *
  *
  */
 @Slf4j
@@ -29,20 +30,18 @@ import static io.vavr.API.run;
 public class GlobalExceptionHandlingControllerAdvice {
 
 
-
     @ExceptionHandler(WebClientResponseException.class)
     @ResponseBody
-    public VndErrors handleNestedServletException(HttpServletRequest req, HttpServletResponse resp,
-                                               WebClientResponseException ex) {
+    public VndErrors handleWebClientResponseException(HttpServletRequest req, HttpServletResponse resp,
+                                                      WebClientResponseException ex) {
 
-         Match(ex).of(
-                Case($(e -> HttpStatus.NOT_FOUND.compareTo(ex.getStatusCode()) == 0),
-                        o -> run(() -> resp.setStatus(HttpStatus.NOT_FOUND.value()))),
-                Case($(e -> HttpStatus.FORBIDDEN.compareTo(ex.getStatusCode()) == 0),
-                        o -> run(() -> resp.setStatus(HttpStatus.TOO_MANY_REQUESTS.value()))),
-                Case($(), o -> run(() -> resp.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value())))
+        HttpStatus status = Match(ex).of(
+                Case($WebClientResponseException($(HttpStatus.NOT_FOUND.value()), $(), $(), $(), $()), () -> HttpStatus.NOT_FOUND),
+                Case($WebClientResponseException($(HttpStatus.FORBIDDEN.value()), $(), $(), $(), $()), () -> HttpStatus.TOO_MANY_REQUESTS),
+                Case($(), () -> HttpStatus.SERVICE_UNAVAILABLE)
         );
 
+        resp.setStatus(status.value());
         log.warn(ex.getMessage());
         return new VndErrors("error", ex.getMessage());
     }
@@ -51,8 +50,7 @@ public class GlobalExceptionHandlingControllerAdvice {
     /**
      * General fallback exception handler, translating all not otherwise caught errors into HTTP status code 503.
      *
-     * @param ex
-     *            Exception
+     * @param ex Exception
      */
     @ExceptionHandler(ServiceUnavailableException.class)
     @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
@@ -64,9 +62,8 @@ public class GlobalExceptionHandlingControllerAdvice {
 
     /**
      * General fallback exception handler, translating all not otherwise caught errors into HTTP status code 503.
-     * 
-     * @param ex
-     *            Exception
+     *
+     * @param ex Exception
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)

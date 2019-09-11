@@ -3,11 +3,11 @@ package com.recruit.githubrepositories.client.impl;
 import com.recruit.githubrepositories.client.GitApiClient;
 import com.recruit.githubrepositories.configuration.ApiConfiguration;
 import com.recruit.githubrepositories.configuration.GithubConfig;
+import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
@@ -92,7 +92,8 @@ public class GithubApiClient implements GitApiClient {
     @Override
     public Mono<ClientResponse> getRepositoryDetailsResponse(@NotNull String owner, @NotNull String repositoryName, String etag) {
 
-        final Mono<ClientResponse> res = this.webClient.get()
+        final Mono<ClientResponse> res = this.webClient
+                .get()
                 .uri(this.uri, owner, repositoryName, clientId, clientSecret)
                 .ifNoneMatch(etag)
                 .exchange();
@@ -115,16 +116,12 @@ public class GithubApiClient implements GitApiClient {
      * @param owner
      * @param repositoryName
      * @return Mono client response from cache. if missing in cache null is returned.
-     * Method is used only to access the cache, not to put values to cache - handled by <br>unless="true"</br>
-     * <p>
-     * Helper method to use Spring caching abstraction instead of using CacheManager explicitly.
-     * </p>
      */
     @Override
-    @Cacheable(value = "github_api_cache", key = "#owner + '_' + #repositoryName", unless = "true")
     public Mono<ClientResponse> getCachedRepositoryDetailsResponse(@NotNull String owner, @NotNull String repositoryName) {
-        log.debug("Repository details not found in cache. Repo name: {}, owner: {}", repositoryName, owner);
-        return null;
+        return Try.of(() -> (Mono<ClientResponse>) this.cache.get(owner + "_" + repositoryName).get())
+                .onSuccess((res) -> log.debug("Repository details not found in cache. Repo name: {}, owner: {}", repositoryName, owner))
+                .getOrNull();
     }
 
 

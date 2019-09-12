@@ -77,7 +77,7 @@ public class GithubRepositoryService implements GitRepositoryService {
             return cachedResponseMono.flatMap(cachedResponse -> {
                 final Mono<ClientResponse> apiResponse = this.githubRepositoryClient.getRepositoryDetailsResponse(owner, repositoryName, cachedResponse.headers().asHttpHeaders().getETag());
                 return apiResponse.flatMap(r -> {
-                    if (HttpStatus.NOT_MODIFIED.compareTo(r.statusCode()) == 0) {
+                    if (HttpStatus.NOT_MODIFIED == r.statusCode()) {
                         log.debug("Using cached response for repository: {}, owner: {}", repositoryName, owner);
                         return cachedResponseMono;
                     }

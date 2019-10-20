@@ -1,5 +1,13 @@
 # github-repositories
 
+## What
+
+Minimal repo showing usage of
+ - Spring Webflux non blocking REST client
+ - Spring Webflux non blocking REST API
+ - Spock unit and integration tests with WireMock
+ 
+
 ## Requirements
 
 Create a simple REST service which will return details of given Github repository. Details should
@@ -29,20 +37,14 @@ Non functional requirements:
 
 * should be able to serve 20 requests per second (concurrently; assuming we have GitHub
 account; simply put: application should not have obvious scaling bottlenecks)
-* set of end-to-end tests that can be run using build tool (Gradle or Maven preferred)
-* good design and quality of code
-* almost ready to deploy on production (if additional work is needed, please describe it in
-README file)
+* set of end-to-end tests that can be run using build tool
 
-It is okay to make tradeoffs or to simplify the solution as long as you leave a note describing your
-thought process.
 
 ## Solution details
 What was used:
 - Github api v3
 - Non blocking web client
 - Caching (to save up requests rate)
-- Bitbucket pipelines
 - Swagger documentation
 - Deployed to heroku for easy testing
 
@@ -102,8 +104,8 @@ to run all tests:
 
 to run all tests in file:
 
-`./gradlew cleanTest :test --tests "com.recruit.githubrepositories.api.controller.GitRepositoryControllerSpec"`
+`./gradlew cleanTest :test --tests "GitRepositoryControllerSpec"`
 
 to run specific test:
 
-`./gradlew cleanTest :test --tests "com.recruit.githubrepositories.service.GithubRepositoryServiceSpec.Github repository service should return RepositoryDetails from cache"`
+`./gradlew cleanTest :test --tests "GithubRepositoryServiceSpec.Github repository service should return RepositoryDetails from cache"`

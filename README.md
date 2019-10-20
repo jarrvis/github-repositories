@@ -6,7 +6,8 @@ Minimal repo showing usage of
  - Spring Webflux non blocking REST client
  - Spring Webflux non blocking REST API
  - Spock unit and integration tests with WireMock
- 
+ - Caching of Mono/Flux (no Spring abstraction)
+ - Mapping with MapStruct 
 
 ## Requirements
 
@@ -78,7 +79,7 @@ If number of possible repositories > 5000 then proposed solution will not work r
 ## Rest Template solution
 
 can be checked at:
-https://bitbucket.org/jarrvis/github-repositories/commits/tag/1.0.0
+https://github.com/jarrvis/github-repositories/tree/1.0.0
 
 ## Run
 
